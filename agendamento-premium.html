@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concierge Digital | Clínica Vida</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #383838;
+            --accent: #26A69A;
+            --bg: #F3F4F6;
+            --white: #FFFFFF;
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            color: var(--primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Container Principal */
+        .concierge-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 800px;
+            min-height: 600px; /* Aumentei um pouco a altura */
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Cabeçalho */
+        .card-header {
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fff;
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.2rem; }
+        .logo-area img { height: 40px; }
+        
+        .progress-indicator {
+            font-size: 0.85rem;
+            color: #999;
+            font-weight: 600;
+        }
+
+        /* Conteúdo */
+        .step-container {
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        h2 { font-size: 2rem; margin-bottom: 10px; line-height: 1.2; }
+        p.subtitle { color: #666; margin-bottom: 30px; font-size: 1.1rem; }
+
+        /* Grid de Opções */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .option-card {
+            border: 2px solid #eee;
+            border-radius: 16px;
+            padding: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            background: #fff;
+        }
+        .option-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(38, 166, 154, 0.15);
+        }
+        .option-card.selected {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .option-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            transition: var(--transition);
+        }
+        .option-card.selected i { color: #fff; }
+        .option-card h3 { font-size: 1.1rem; font-weight: 600; }
+
+        /* Inputs e Textarea */
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            outline: none;
+            transition: 0.3s;
+            background: #FAFAFA;
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-input:focus, .form-textarea:focus { 
+            border-color: var(--accent); 
+            background: #fff;
+        }
+
+        /* Botões */
+        .nav-buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-prev {
+            background: none; border: none; color: #999; cursor: pointer;
+            font-weight: 600; display: flex; align-items: center; gap: 8px;
+            font-family: inherit;
+        }
+        .btn-prev:hover { color: var(--primary); }
+        
+        .btn-next {
+            background: var(--primary); color: #fff; padding: 15px 40px;
+            border-radius: 50px; border: none; font-weight: 600;
+            cursor: pointer; transition: var(--transition);
+            display: flex; align-items: center; gap: 10px;
+            font-family: inherit;
+        }
+        .btn-next:hover {
+            background: var(--accent);
+            box-shadow: 0 5px 15px rgba(38, 166, 154, 0.4);
+        }
+
+        /* Tela de Sucesso */
+        .success-screen { text-align: center; display: none; padding: 20px; }
+        .success-icon {
+            width: 80px; height: 80px; background: #E0F2F1; color: var(--accent);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; margin: 0 auto 30px;
+        }
+
+        .step { display: none; }
+        .step.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .concierge-card { border-radius: 0; min-height: 100vh; }
+            .options-grid { grid-template-columns: 1fr; }
+            .card-header { padding: 20px; }
+            .step-container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="concierge-card">
+        <div class="card-header">
+            <div class="logo-area">
+                <img src="clinica viva odonto.png" alt="Logo">
+                <span>Concierge</span>
+            </div>
+            <div class="progress-indicator">
+                Passo <span id="currentStepNum">1</span> de 4
+            </div>
+        </div>
+
+        <div class="step-container">
+            <form id="wizardForm" onsubmit="event.preventDefault(); finishProcess();">
+                
+                <div class="step active" id="step1">
+                    <h2>Olá! Como podemos te ajudar hoje?</h2>
+                    <p class="subtitle">Selecione o motivo principal da sua visita.</p>
+                    
+                    <div class="options-grid">
+                        <div class="option-card" onclick="selectOption(this, 'step1', 'Dor de Dente')">
+                            <i class="fas fa-notes-medical"></i>
+                            <h3>Estou com Dor</h3>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this, 'step1', 'Estética')">
+                            <i class="far fa-smile-beam"></i>
+                            <h3>Melhorar Estética</h3>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this, 'step1', 'Limpeza/Checkup')">
+                            <i class="fas fa-tooth"></i>
+                            <h3>Limpeza e Check-up</h3>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this, 'step1', 'Implantes')">
+                            <i class="fas fa-screwdriver"></i> <h3>Implantes</h3>
+                        </div>
+                    </div>
+                    <input type="hidden" id="inputMotivo" required>
+                    
+                    <div class="nav-buttons" style="justify-content: flex-end;">
+                        <button type="button" class="btn-next" onclick="nextStep(2)">Continuar <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="step" id="step2">
+                    <h2>Qual sua urgência para o tratamento?</h2>
+                    <p class="subtitle">Isso nos ajuda a priorizar sua agenda.</p>
+                    
+                    <div class="options-grid">
+                        <div class="option-card" onclick="selectOption(this, 'step2', 'Imediata')">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <h3>Preciso para Hoje</h3>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this, 'step2', 'Essa Semana')">
+                            <i class="far fa-calendar-alt"></i>
+                            <h3>Nesta Semana</h3>
+                        </div>
+                        <div class="option-card" onclick="selectOption(this, 'step2', 'Sem Pressa')">
+                            <i class="far fa-clock"></i>
+                            <h3>Planejamento Futuro</h3>
+                        </div>
+                    </div>
+                    <input type="hidden" id="inputUrgencia">
+
+                    <div class="nav-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep(1)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                        <button type="button" class="btn-next" onclick="nextStep(3)">Continuar <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="step" id="step3">
+                    <h2>Poderia nos dar mais detalhes?</h2>
+                    <p class="subtitle">Descreva brevemente o que está sentindo ou o que deseja fazer (opcional).</p>
+                    
+                    <div style="max-width: 600px; margin: 0 auto;">
+                        <textarea class="form-textarea" id="userDescription" placeholder="Ex: Sinto dor ao beber água gelada no dente do fundo... ou... Gostaria de saber sobre lentes de contato."></textarea>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep(2)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                        <button type="button" class="btn-next" onclick="nextStep(4)">Continuar <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="step" id="step4">
+                    <h2>Quase lá!</h2>
+                    <p class="subtitle">Deixe seus dados para receber nossa análise prévia.</p>
+                    
+                    <div style="max-width: 500px; margin: 0 auto;">
+                        <input type="text" class="form-input" id="userName" placeholder="Seu Nome Completo" required>
+                        <input type="tel" class="form-input" id="userPhone" placeholder="Seu WhatsApp (com DDD)" required>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep(3)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                        <button type="submit" class="btn-next">Enviar para Análise <i class="fab fa-whatsapp"></i></button>
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="success-screen" id="successScreen">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h2>Solicitação em Análise!</h2>
+                <p class="subtitle" style="max-width: 600px; margin: 0 auto;">
+                    Obrigado, <span id="finalName" style="font-weight: 700; color: var(--primary);"></span>. 
+                    Nossa equipe clínica recebeu seus detalhes sobre 
+                    <span id="finalMotivo" style="font-weight: 700; color: var(--accent);"></span>.
+                </p>
+                <p style="margin-top: 20px; font-size: 0.95rem; color: #555;">
+                    Estamos abrindo seu WhatsApp para conectar você ao especialista responsável pela triagem.
+                </p>
+                
+                <a href="index.html" style="display: inline-block; margin-top: 40px; color: var(--accent); font-weight: 600; text-decoration: none;">
+                    Voltar ao site principal
+                </a>
+            </div>
+        </div>
+    </div>
+
+  <script>
+        let currentStep = 1;
+        const totalSteps = 4; // Agora são 4 passos
+
+        // Selecionar Opções (Passos 1 e 2)
+        function selectOption(element, stepId, value) {
+            const siblings = document.querySelectorAll(`#${stepId} .option-card`);
+            siblings.forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+
+            if(stepId === 'step1') {
+                document.getElementById('inputMotivo').value = value;
+            } else if (stepId === 'step2') {
+                document.getElementById('inputUrgencia').value = value;
+            }
+        }
+
+        // Navegação Próximo
+        function nextStep(step) {
+            // Validações
+            if(step === 2 && document.getElementById('inputMotivo').value === '') {
+                alert("Por favor, selecione uma opção para continuar.");
+                return;
+            }
+            if(step === 3 && document.getElementById('inputUrgencia').value === '') {
+                alert("Por favor, selecione a urgência.");
+                return;
+            }
+            // O passo 3 (descrição) é opcional, não precisa validar
+
+            // Troca de tela
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            
+            // Atualiza barra de progresso
+            currentStep = step;
+            document.getElementById('currentStepNum').innerText = currentStep;
+        }
+
+        // Navegação Voltar
+        function prevStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            currentStep = step;
+            document.getElementById('currentStepNum').innerText = currentStep;
+        }
+
+        // --- FINALIZA E ENVIA PARA WHATSAPP ---
+        function finishProcess() {
+            // 1. Coleta todos os dados
+            const name = document.getElementById('userName').value;
+            const userPhone = document.getElementById('userPhone').value;
+            const motivo = document.getElementById('inputMotivo').value;
+            const urgencia = document.getElementById('inputUrgencia').value;
+            const description = document.getElementById('userDescription').value; // Novo campo
+
+            if(!name || !userPhone) { alert("Por favor, preencha nome e telefone."); return; }
+
+            // 2. Configura Número (Seu número)
+            const numeroClinica = "5519991040950"; 
+            
+            // 3. Monta a mensagem detalhada
+            const textoMensagem = 
+                `*📋 NOVA TRIAGEM DIGITAL*\n` +
+                `--------------------------------\n` +
+                `👤 *Paciente:* ${name}\n` +
+                `📱 *Contato:* ${userPhone}\n` +
+                `🦷 *Motivo:* ${motivo}\n` +
+                `🚨 *Urgência:* ${urgencia}\n` +
+                `--------------------------------\n` +
+                `📝 *Relato do Problema:*\n` +
+                `${description ? description : 'Não informado'}\n` +
+                `--------------------------------\n` +
+                `Aguardo retorno para saber se é possível o atendimento.`;
+
+            // 4. Gera link
+            const linkWhatsApp = `https://wa.me/${numeroClinica}?text=${encodeURIComponent(textoMensagem)}`;
+
+            // 5. Feedback Visual
+            document.getElementById('wizardForm').style.display = 'none';
+            document.querySelector('.progress-indicator').style.display = 'none';
+            document.getElementById('finalName').innerText = name;
+            document.getElementById('finalMotivo').innerText = motivo;
+            document.getElementById('successScreen').style.display = 'block';
+
+            // 6. Abre WhatsApp
+            setTimeout(() => {
+                window.open(linkWhatsApp, '_blank');
+            }, 1500);
+        }
+    </script>
+
+</body>
+</html>
